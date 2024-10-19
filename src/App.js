@@ -17,9 +17,9 @@ function App() {
       <Router>
           <Routes>
             <Route path="/" element={<PrivateRoute><Dashboard/></PrivateRoute>} />
-            <Route path="/aquarium" element={<PrivateRoute><Aquarium/></PrivateRoute>} />
-            <Route path="/market" element={<PrivateRoute><Market/></PrivateRoute>} />
-            <Route path="/fishing" element={<PrivateRoute><Fishing/></PrivateRoute>} />
+            <Route path="/aquarium" element={<PrivateRoute><Dashboard currentTab="aquarium"/></PrivateRoute>} />
+            <Route path="/market" element={<PrivateRoute><Dashboard currentTab="market"/></PrivateRoute>} />
+            <Route path="/fishing" element={<PrivateRoute><Dashboard currentTab="fishing"/></PrivateRoute>} />
             <Route path="/login" element={<Login/>} />
             <Route path="/signup" element={<Signup/>} />
           </Routes>

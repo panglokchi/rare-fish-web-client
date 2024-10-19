@@ -299,7 +299,8 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
                     </>:
                     <>
                         <Card.Body className="py-1 px-2 p-sm-2 px-sm-3">
-                            Create a new Auction
+                            Create a new Auction <br></br>
+                            (From 🛁Aquarium)
                         </Card.Body>
                         <ListGroup className="list-group-flush">
 

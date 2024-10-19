@@ -10,13 +10,7 @@ import BottomFooter from './BottomFooter';
 import { sortFish } from '../utils/utils';
 const API_URL = process.env.REACT_APP_API_URL; // Mock API
 
-function Fishing() {
-  const [userData, setUserData] = useState('');
-  const [playerData, setPlayerData] = useState('');
-  const [expNeeded, setExpNeeded] = useState({
-    lastLevelExp: 100,
-    nextLevelExp: 105
-  });
+function Fishing({updatePlayerData = null, playerData = null, small = false}) {
   const [fishList, setFishList] = useState([]);
   const [fishInfo, setFishInfo] = useState(null);
   const [disableButtons, setDisableButtons] = useState(false);
@@ -28,23 +22,9 @@ function Fishing() {
   const navigate = useNavigate();
 
   const fetchData = async () => {
-
-    const config = {
-      headers: { Authorization: `Bearer ${localStorage.getItem("accessToken")}` }
-    };
-  
-    //console.log(config)
-  
+ 
     try {
-      const userDataResponse = await axios.get(`${API_URL}/user/`, config);
-      const playerDataResponse = await axios.get(`${API_URL}/user/player`, config);
-      const expNeededResponse = await axios.get(`${API_URL}/player/get-xp-needed/`, config);
-      //const fishListResponse = await axios.get(`${API_URL}/player/${playerDataResponse.data._id}/fishes`, config);
-      setUserData(userDataResponse.data);
-      setPlayerData(playerDataResponse.data);
-      setExpNeeded(expNeededResponse.data)
-      //setFishList(fishListResponse.data)
-      //console.log(fishListResponse.data)
+
     } catch (error) {
       setError(error.message);
     }
@@ -75,9 +55,12 @@ function Fishing() {
       setShowSpinner(false)
       setTimeout(()=>{setDisableButtons(false)}, 1000)
       setFishList(fishListResponse.data)
+      updatePlayerData();
     } catch (error) {
       setMessage({status: "warning", message: "Not enough 🦐"})
       setTimeout(()=>{setDisableButtons(false)}, 1000)
+      setShowSpinner(false)
+      updatePlayerData();
     }
   }
 
@@ -90,103 +73,132 @@ function Fishing() {
       await fetchData()
       await new Promise(res => setTimeout(res, 1000))
       setShowSpinner(false)
-      setTimeout(()=>{setDisableButtons(false)}, 3000)
+      setTimeout(()=>{setDisableButtons(false)}, 2000)
       setFishList(fishListResponse.data)
+      updatePlayerData();
     } catch (error) {
       setMessage({status: "warning", message: "Not enough 🦐"})
-      setTimeout(()=>{setDisableButtons(false)}, 3000)
+      setTimeout(()=>{setDisableButtons(false)}, 2000)
       setShowSpinner(false)
+      updatePlayerData();
     }
   }
 
-  if (loading) {
-    return <div>Loading...</div>;
+  const getHeader = () => {
+    return (
+      <>
+        <div className="mb-2 d-flex justify-content-between align-items-center">
+          <div><h5 className="m-0 py-2">Go Fishing</h5></div>
+          <div>
+            <Alert className="m-0 p-2" variant={message.status} show={message.status != "secondary"}>
+              {message.message}
+            </Alert>
+          </div>
+          <div>
+            <InputGroup style={{width:"120px"}} className="m-0">
+              <InputGroup.Text id="basic-addon1" className="p-1 px-md-2">🦐</InputGroup.Text>
+              <Form.Control
+                style={{textAlign: "right"}}
+                aria-label="bait-amount"
+                aria-describedby="basic-addon1"
+                value={playerData.bait}
+                disabled
+                as="input"
+                htmlSize={1}
+              />
+            </InputGroup>
+          </div>
+        </div>
+        <Stack direction='horizontal'>
+          <Button variant="secondary" size="lg" className="w-50 me-2 mb-2"
+            onClick={()=>{fishOnce()}} disabled={disableButtons}>
+          🎣×1 🦐×1
+          </Button>
+          <Button variant="primary" size="lg" className="w-50 ms-2 mb-2"
+            onClick={()=>{fishTenTimes()}} disabled={disableButtons}>
+          🎣×10 🦐×10
+          </Button>
+        </Stack>
+      </>
+    )
   }
 
+  const getContent = () => {
+    return <>
+      <style type="text/css">
+        {`
+        .card#fish-card:hover {
+          border: 1px solid #777;
+          filter: brightness(130%)
+        }
+        `}
+        </style>
+      <FishInfoSheet show={showFishInfo} onHide={() => setShowFishInfo(false)} item={fishInfo} ownFish={false}/>
+      <div className="p-0 overflow-y-auto overflow-x-hidden" style={{maxHeight: "55vh"}}>
+        <Row xs={2} sm={2} md={2} lg={3} xl={5} className="g-3 overflow-y-auto">
+          {Array.from(fishList).sort(sortFish).map((item) => (
+            <Col key={item.key}>
+                <FishCard
+                  id="fish-card"
+                  style={{ cursor: "pointer", height: "100%"}}
+                  item={item}
+                  onClick={()=>{
+                    setShowFishInfo(true)
+                    setFishInfo(item)
+                    //console.log(fishInfo)
+                  }}
+                />
+            </Col>
+          ))}
+        </Row>
+      </div>
+    </>
+  }
+
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center m-5 p-5">
+        <Spinner></Spinner>
+      </div>
+    )
+  }
   if (error) {
     return <div>Error: {error}</div>;
   }
   return (
-      <Container fluid className="text-light p-0 m-0" data-bs-theme="dark">
-        <TopNavbar userData={userData} playerData={playerData}></TopNavbar>
-        <BottomFooter playerData={playerData} expNeeded={expNeeded}/>
-        <Container className="py-0 py-sm-2 px-0 px-sm-1" style={{maxHeight: "100%"}}>
-          <Card className="mt-2 pb-2 overflow-y-auto" style={{maxHeight: "100%"}}>
-            <Card.Body className={"mh-100 p-2 pt-1 p-sm-3 pt-sm-2 overflow-y-auto"} style={{maxHeight: "100%"}}>
-              <Card.Text className="overflow-y-auto">
-                <div className="mb-2 d-flex justify-content-between align-items-center">
-                  <div><h5 className="m-0 py-2">Go Fishing</h5></div>
-                  <div>
-                    <Alert className="m-0 p-2" variant={message.status} show={message.status != "secondary"}>
-                      {message.message}
-                    </Alert>
-                  </div>
-                  <div>
-                    <InputGroup style={{width:"120px"}} className="m-0">
-                      <InputGroup.Text id="basic-addon1" className="p-1 px-md-2">🦐</InputGroup.Text>
-                      <Form.Control
-                        style={{textAlign: "right"}}
-                        aria-label="bait-amount"
-                        aria-describedby="basic-addon1"
-                        value={playerData.bait}
-                        disabled
-                        as="input"
-                        htmlSize={1}
-                      />
-                    </InputGroup>
-                  </div>
-                </div>
-                <Stack direction='horizontal'>
-                  <Button variant="secondary" size="lg" className="w-50 me-2 mb-2"
-                    onClick={()=>{fishOnce()}} disabled={disableButtons}>
-                  🎣×1 🦐×1
-                  </Button>
-                  <Button variant="primary" size="lg" className="w-50 ms-2 mb-2"
-                    onClick={()=>{fishTenTimes()}} disabled={disableButtons}>
-                  🎣×10 🦐×10
-                  </Button>
-                </Stack>
-                {showSpinner && <Container fluid>
-                  <div className="text-center py-3">
-                    <h1 className="display-7">
-                      <Spinner animation="border" size='lg'/>
-                    </h1>
-                  </div>
-                </Container>}
-                <style type="text/css">
-                    {`
-                      .card#fish-card:hover {
-                        border: 1px solid #777;
-                        filter: brightness(130%)
-                      }
-                    `}
-                  </style>
-                <FishInfoSheet show={showFishInfo} onHide={() => setShowFishInfo(false)} item={fishInfo} ownFish={false}/>
-                <div className="p-0 overflow-y-auto overflow-x-hidden" style={{maxHeight: "55vh"}}>
-                  <Row xs={2} sm={2} md={2} lg={3} xl={5} className="g-4 overflow-y-auto">
-                    {Array.from(fishList).sort(sortFish).map((item) => (
-                      <Col key={item.key}>
-                          <FishCard
-                            id="fish-card"
-                            style={{ cursor: "pointer", height: "100%"}}
-                            item={item}
-                            onClick={()=>{
-                              setShowFishInfo(true)
-                              setFishInfo(item)
-                              //console.log(fishInfo)
-                            }}
-                          />
-                      </Col>
-                    ))}
-                  </Row>
-                </div>
-                  
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        </Container>
+    <div>
+        { small && 
+          <div className="bg-body-tertiary p-1">
+            {getHeader()}
+          </div>
+        }
+        { !small && 
+          <div>
+            {getHeader()}
+          </div>
+        }
 
-      </Container>
+        
+        {showSpinner && <Container fluid>
+          <div className="text-center py-3">
+            <h1 className="display-7">
+              <Spinner animation="border" size='lg'/>
+            </h1>
+          </div>
+        </Container>}
+        
+        { small && 
+          <div className="p-1">
+            {getContent()}
+          </div>
+        }
+        { !small && 
+          <div>
+            {getContent()}
+          </div>
+        }
+
+    </div>
   );
 }
 
