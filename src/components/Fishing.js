@@ -7,6 +7,7 @@ import FishCard from "./FishCard"
 import FishInfoSheet from "./FishInfoSheet"
 import TopNavbar from './TopNavbar';
 import BottomFooter from './BottomFooter';
+import { sortFish } from '../utils/utils';
 const API_URL = process.env.REACT_APP_API_URL; // Mock API
 
 function Fishing() {
@@ -18,6 +19,8 @@ function Fishing() {
   });
   const [fishList, setFishList] = useState([]);
   const [fishInfo, setFishInfo] = useState(null);
+  const [disableButtons, setDisableButtons] = useState(false);
+  const [message, setMessage] = useState({status: "secondary", message: null})
   const [showFishInfo, setShowFishInfo] = useState(false);
   const [loading, setLoading] = useState(true);
   const [showSpinner, setShowSpinner] = useState(false);
@@ -62,20 +65,38 @@ function Fishing() {
   };
 
   const fishOnce = async () => {
-    const fishListResponse = await axios.post(`${API_URL}/player/go-fishing`, {"world": "W1"}, config);
-    //console.log(fishListResponse);
-    await fetchData()
-    setFishList(fishListResponse.data)
+    try {
+      setFishList([])
+      setDisableButtons(true);
+      setShowSpinner(true)
+      const fishListResponse = await axios.post(`${API_URL}/player/go-fishing`, {"world": "W1"}, config);
+      //console.log(fishListResponse);
+      await fetchData()
+      setShowSpinner(false)
+      setTimeout(()=>{setDisableButtons(false)}, 1000)
+      setFishList(fishListResponse.data)
+    } catch (error) {
+      setMessage({status: "warning", message: "Not enough 🦐"})
+      setTimeout(()=>{setDisableButtons(false)}, 1000)
+    }
   }
 
   const fishTenTimes = async () => {
-    setShowSpinner(true)
-    setFishList([])
-    await new Promise(res => setTimeout(res, 1000))
-    setShowSpinner(false)
-    const fishListResponse = await axios.post(`${API_URL}/player/go-fishing`, {"world": "W1", "times": 10}, config);
-    await fetchData()
-    setFishList(fishListResponse.data)
+    try {
+      setFishList([])
+      setDisableButtons(true);
+      setShowSpinner(true)
+      const fishListResponse = await axios.post(`${API_URL}/player/go-fishing`, {"world": "W1", "times": 10}, config);
+      await fetchData()
+      await new Promise(res => setTimeout(res, 1000))
+      setShowSpinner(false)
+      setTimeout(()=>{setDisableButtons(false)}, 3000)
+      setFishList(fishListResponse.data)
+    } catch (error) {
+      setMessage({status: "warning", message: "Not enough 🦐"})
+      setTimeout(()=>{setDisableButtons(false)}, 3000)
+      setShowSpinner(false)
+    }
   }
 
   if (loading) {
@@ -86,17 +107,22 @@ function Fishing() {
     return <div>Error: {error}</div>;
   }
   return (
-      <Container fluid className="text-light p-0" data-bs-theme="dark">
+      <Container fluid className="text-light p-0 m-0" data-bs-theme="dark">
         <TopNavbar userData={userData} playerData={playerData}></TopNavbar>
         <BottomFooter playerData={playerData} expNeeded={expNeeded}/>
-        <Container style={{maxHeight: "100%"}}>
+        <Container className="py-0 py-sm-2 px-0 px-sm-1" style={{maxHeight: "100%"}}>
           <Card className="mt-2 pb-2 overflow-y-auto" style={{maxHeight: "100%"}}>
-            <Card.Body className={"mh-100 p-2 p-sm-3 overflow-y-auto"} style={{maxHeight: "100%"}}>
+            <Card.Body className={"mh-100 p-2 pt-1 p-sm-3 pt-sm-2 overflow-y-auto"} style={{maxHeight: "100%"}}>
               <Card.Text className="overflow-y-auto">
-                <Stack direction='horizontal' className="mb-2">
-                  <div><h5>Go Fishing</h5></div>
-                  <div className="ms-auto">
-                    <InputGroup style={{width:"120px"}} className="">
+                <div className="mb-2 d-flex justify-content-between align-items-center">
+                  <div><h5 className="m-0 py-2">Go Fishing</h5></div>
+                  <div>
+                    <Alert className="m-0 p-2" variant={message.status} show={message.status != "secondary"}>
+                      {message.message}
+                    </Alert>
+                  </div>
+                  <div>
+                    <InputGroup style={{width:"120px"}} className="m-0">
                       <InputGroup.Text id="basic-addon1" className="p-1 px-md-2">🦐</InputGroup.Text>
                       <Form.Control
                         style={{textAlign: "right"}}
@@ -109,12 +135,14 @@ function Fishing() {
                       />
                     </InputGroup>
                   </div>
-                </Stack>
+                </div>
                 <Stack direction='horizontal'>
-                  <Button variant="secondary" size="lg" className="w-50 me-2 mb-2" onClick={()=>{fishOnce()}}>
+                  <Button variant="secondary" size="lg" className="w-50 me-2 mb-2"
+                    onClick={()=>{fishOnce()}} disabled={disableButtons}>
                   🎣×1 🦐×1
                   </Button>
-                  <Button variant="primary" size="lg" className="w-50 ms-2 mb-2" onClick={()=>{fishTenTimes()}}>
+                  <Button variant="primary" size="lg" className="w-50 ms-2 mb-2"
+                    onClick={()=>{fishTenTimes()}} disabled={disableButtons}>
                   🎣×10 🦐×10
                   </Button>
                 </Stack>
@@ -136,7 +164,7 @@ function Fishing() {
                 <FishInfoSheet show={showFishInfo} onHide={() => setShowFishInfo(false)} item={fishInfo} ownFish={false}/>
                 <div className="p-0 overflow-y-auto overflow-x-hidden" style={{maxHeight: "55vh"}}>
                   <Row xs={2} sm={2} md={2} lg={3} xl={5} className="g-4 overflow-y-auto">
-                    {Array.from(fishList).map((item) => (
+                    {Array.from(fishList).sort(sortFish).map((item) => (
                       <Col key={item.key}>
                           <FishCard
                             id="fish-card"

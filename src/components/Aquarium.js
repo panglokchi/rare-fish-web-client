@@ -7,6 +7,7 @@ import FishCard from "./FishCard"
 import FishInfoSheet from "./FishInfoSheet"
 import TopNavbar from './TopNavbar';
 import BottomFooter from './BottomFooter';
+import { sortFish } from '../utils/utils';
 const API_URL = process.env.REACT_APP_API_URL; // Mock API
 
 function Aquarium() {
@@ -132,10 +133,10 @@ function Aquarium() {
     return <div>Error: {error}</div>;
   }
   return (
-      <div className="text-light p-0 d-flex flex-column vh-100 justify-content-space-between" data-bs-theme="dark">
+      <div className="text-light p-0 d-flex flex-column vh-100" data-bs-theme="dark">
         <TopNavbar userData={userData} playerData={playerData} sticky={false}></TopNavbar>
-        <div className="flex-grow-1" style={{maxHeight: "85%"}}>
-          <Container className="py-2" style={{height: "100%"}}>
+        <div className="flex-grow-1 m-0" style={{maxHeight: "85%"}}>
+          <Container className="py-1 py-sm-2 px-0 px-sm-1" style={{height: "100%"}}>
             <Card className="" style={{height: "80%"}}>
             <Card.Header>
                 <Nav variant="tabs" defaultActiveKey={
@@ -156,7 +157,7 @@ function Aquarium() {
                   </Nav.Item>
                 </Nav>
             </Card.Header>
-            <Card.Body className={"mh-100 p-2 p-sm-3 overflow-y-auto"} style={{maxHeight: "100%"}}>
+            <Card.Body className={"mh-100 p-2 p-sm-3 overflow-y-hidden"} style={{maxHeight: "100%"}}>
               { currentTab == "aquarium" &&
                 <>
                   <Stack direction='horizontal' className="">
@@ -237,7 +238,7 @@ function Aquarium() {
                   <ProgressBar now={playerData.aquarium_money/10000*100} variant={"warning"} className="my-2">
                   </ProgressBar>
 
-                  <div className="overflow-y-auto overflow-x-hidden" style={{maxHeight: "55vh"}}>
+                  <div className="overflow-y-auto overflow-x-hidden" style={{maxHeight: "65vh"}}>
                     <style type="text/css">
                       {`
                         .card#fish-card:hover {
@@ -282,7 +283,7 @@ function Aquarium() {
                   </Stack>
                   <div className="d-flex d-sm-none overflow-y-auto overflow-x-hidden p-0"
                     id="mobile-card-grid"
-                    style={{scrollbarWidth: "none", maxHeight: "55vh"}}
+                    style={{scrollbarWidth: "none", maxHeight: "65vh"}}
                   >
                     <style type="text/css">
                       {`
@@ -295,13 +296,13 @@ function Aquarium() {
                         }
                       `}
                     </style>
-                    {/*scrollbarWidth for firefox, -webkit-scrollbar for safari and chrome */}
+                    {/*scrollbarWidth for firefox and chrome, -webkit-scrollbar for safari and? chrome */}
                     <FishInfoSheet show={showFishInfo} onHide={() => setShowFishInfo(false)}
                       item={fishInfo} player={playerData} updatePlayerData={()=>updatePlayerData()}
                         fetchData={()=>{fetchData()}}
                       />
                     <Row xs={2} sm={2} md={2} lg={3} xl={4} xxl={5} className="g-2">
-                      {Array.from(fishList).filter((item)=>{
+                      {Array.from(fishList).sort(sortFish).filter((item)=>{
                         if (Array.from(aquariumList).map((item)=>{return item.fish}).includes(item._id)) {
                           return false
                         } else return true
@@ -323,8 +324,7 @@ function Aquarium() {
                     </Row>
                   </div>
                   <div className="d-none d-sm-flex overflow-y-auto overflow-x-hidden"
-                    /*style={{height: "60vh"}}*/
-                    style={{maxHeight: "55vh"}}
+                    style={{maxHeight: "65vh"}}
                   >
                     <style type="text/css">
                       {`
@@ -332,15 +332,28 @@ function Aquarium() {
                           border: 1px solid #777;
                           filter: brightness(130%)
                         }
+                        #big-card-grid::-webkit-scrollbar {
+                          width: 16px;
+                        }
+                        #big-card-grid::-webkit-scrollbar-thumb {
+                          background: #777;
+                          border-radius: 90px;
+                          border: 4px solid rgba(0, 0, 0, 0);
+                          background-clip: padding-box;
+                        }
+                        #big-card-grid::-webkit-scrollbar-track {
+                          background: transparent;
+                        }
                       `}
                     </style>
                     <FishInfoSheet show={showFishInfo} onHide={() => setShowFishInfo(false)}
                       item={fishInfo} player={playerData} updatePlayerData={()=>updatePlayerData()}
                         fetchData={()=>{fetchData()}}
                       />
-                    <Container className="p-0 overflow-y-hidden overflow-x-hidden">
+                    <Container className="p-0 overflow-y-auto overflow-x-hidden"
+                      id="big-card-grid" style={{scrollbarColor: "#777 transparent", maxHeight: "65vh"}}>
                       <Row xs={2} sm={2} md={2} lg={3} xl={4} xxl={5} className="g-3 overflow-y-hidden overflow-x-hidden">
-                        {Array.from(fishList).filter((item)=>{
+                        {Array.from(fishList).sort(sortFish).filter((item)=>{
                           if (Array.from(aquariumList).map((item)=>{return item.fish}).includes(item._id)) {
                             return false
                           } else return true

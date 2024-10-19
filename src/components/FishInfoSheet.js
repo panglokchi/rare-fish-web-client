@@ -195,32 +195,38 @@ function FishInfoSheet({show, onHide, item, ownFish = true, player = null, updat
               </div>
               { ownFish && <>
                 
-                  <div className="d-flex flex-column align-items-stretch">
+                  <div className="d-flex flex-column align-items-end">
 
-                    <div className="d-flex d-sm-none justify-content-between align-items-center"
-                      style={{fontSize: "0.8rem"}}
+                    <div className="d-block d-sm-none"
+                      style={{fontSize: "0.8rem", minWidth: "120px", maxWidth: "100%"}}
                     >
                       <InputGroup style={{fontSize: "0.8rem"}} className="d-flex d-sm-none mt-2">
                           <InputGroup.Text id="basic-addon1" className="py-2 px-1" style={{fontSize: "0.9rem"}}>🌿</InputGroup.Text>
-                          <Form.Control
-                            style={{fontSize: "1rem"}}
-                            className="py-0 px-2"
-                            aria-label="kelp-amount"
-                            aria-describedby="basic-addon1"
-                            value={player?.kelp}
-                            disabled
-                            as="input"
-                            htmlSize={1}
-                          />
-                          <Button variant="outline-success" className="py-2 px-2" onClick={()=>{handleFeedFish(1)}} style={{fontSize: "0.9rem"}}>
-                            🌿×1
-                          </Button>
-                          <Button variant="outline-success" className="py-2 px-1" onClick={()=>{handleFeedFish(10)}} style={{fontSize: "0.9rem"}}>
-                            🌿×10
-                          </Button>
+                            <Form.Control
+                              style={{fontSize: "1rem"}}
+                              className="py-0 px-2"
+                              aria-label="kelp-amount"
+                              aria-describedby="basic-addon1"
+                              value={player?.kelp}
+                              disabled
+                              as="input"
+                              htmlSize={1}
+                            />
                         </InputGroup>
                     </div>
-                    <InputGroup className="d-none d-md-flex mt-2 align-self-end w-50">
+                    <div className="d-flex d-sm-none align-items-end"
+                      style={{fontSize: "0.8rem"}}
+                    >
+                      <InputGroup style={{fontSize: "0.8rem"}} className="d-flex d-sm-none mt-2 ms-auto">
+                        <Button variant="outline-success" className="py-2 px-2" onClick={()=>{handleFeedFish(1)}} style={{fontSize: "0.9rem"}}>
+                          🌿×1
+                        </Button>
+                        <Button variant="outline-success" className="py-2 px-1" onClick={()=>{handleFeedFish(10)}} style={{fontSize: "0.9rem"}}>
+                          🌿×10
+                        </Button>
+                      </InputGroup>
+                    </div>
+                    <InputGroup className="d-none d-md-flex mt-2 align-self-end" style={{maxWidth: "350px"}}>
                       <InputGroup.Text id="basic-addon1" className="py-2 px-2">🌿</InputGroup.Text>
                       <Form.Control
                         className="py-2 px-2"

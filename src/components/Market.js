@@ -128,27 +128,27 @@ function Market() {
       <Container fluid className="text-light p-0" data-bs-theme="dark">
         <TopNavbar userData={userData} playerData={playerData}></TopNavbar>
         <BottomFooter playerData={playerData} expNeeded={expNeeded}/>
-        <Container>
+        <Container className="py-0 py-sm-2 px-0 px-sm-1">
           <Card className="mt-2 pb-2">
-            <Card.Header>
-              <Nav variant="tabs" defaultActiveKey={
+            <Card.Header className="px-3 px-sm-3">
+              <Nav fill variant="tabs" defaultActiveKey={
                 sessionStorage.getItem("marketTab") ? 
                 sessionStorage.getItem("marketTab") : 
                 "own"}>
                 <Nav.Item>
-                  <Nav.Link eventKey="own" onClick={()=>{
+                  <Nav.Link className="px-1 px-sm-3" eventKey="own" onClick={()=>{
                     setCurrentTab("own");
                     sessionStorage.setItem("marketTab", "own")
                   }}>💰Your Auctions</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="other" onClick={()=>{
+                  <Nav.Link className="px-1 px-sm-3" eventKey="other" onClick={()=>{
                     setCurrentTab("other");
                     sessionStorage.setItem("marketTab", "other");
                   }}>📈Current</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="finished" onClick={()=>{
+                  <Nav.Link className="px-1 px-sm-3" eventKey="finished" onClick={()=>{
                     setCurrentTab("finished");
                     sessionStorage.setItem("marketTab", "finished");
                   }}>⌛Finished</Nav.Link>
