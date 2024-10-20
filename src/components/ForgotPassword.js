@@ -7,10 +7,11 @@ import { login } from '../utils/auth';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-function Login() {
+function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({status: "secondary", message: null})
+  const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState('');
   const navigate = useNavigate();
   const routeChange = () =>{ 
@@ -22,8 +23,6 @@ function Login() {
     const newErrors = {};
     if (!email) newErrors.email = 'Email is required';
     else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = 'Email is invalid';
-    if (!password) newErrors.password = 'Password is required';
-    else if (password.length < 3) newErrors.password = 'Password must be at least 3 characters';
     return newErrors;
   };
 
@@ -37,9 +36,10 @@ function Login() {
       try {
         setErrors({});
         //console.log('Login attempted with:', { email, password });
-        const userData = await login(email, password);
+        const response = await axios.post(`${API_URL}/forgot-password`, { email });
         //console.log('Login successful:', userData);
-        routeChange();
+        setMessage({ status: "success", message: response.data.message})
+        setSuccess(true)
       } catch (error) {
         setErrors({ form: 'Login failed. Please try again.' });
         setMessage({ status: "warning", message: error.response.data.error})
@@ -62,23 +62,10 @@ function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   isInvalid={!!errors.email}
+                  disabled={success}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.email}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              <Form.Group controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  isInvalid={!!errors.password}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {errors.password}
                 </Form.Control.Feedback>
               </Form.Group>
 
@@ -88,14 +75,10 @@ function Login() {
                 </Alert>
               }
 
-              <a href="/forgot-password">Forgot Password?</a>
+              <Button variant="primary" type="submit" className="login-button" disabled={success}>
+                Reset Password
+              </Button>
 
-              <Button variant="primary" type="submit" className="login-button">
-                Login
-              </Button>
-              <Button variant="secondary" className="signup-button" onClick={()=>{navigate("/signup")}}>
-                Sign Up
-              </Button>
             </Stack>
           </Form>
         </Card.Body>
@@ -104,4 +87,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;

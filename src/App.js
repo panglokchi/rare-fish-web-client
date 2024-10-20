@@ -11,6 +11,8 @@ import Market from './components/Market';
 import Signup from './components/Signup';
 import PrivateRoute from './components/PrivateRoute';
 import Verify from './components/Verify';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
             <Route path="/fishing" element={<PrivateRoute><Dashboard currentTab="fishing"/></PrivateRoute>} />
             <Route path="/login" element={<Login/>} />
             <Route path="/verify/:token" element={<Verify/>} />
+            <Route path="/forgot-password" element={<ForgotPassword/>} />
+            <Route path="/reset-password/:token" element={<ResetPassword/>} />
             <Route path="/signup" element={<Signup/>} />
           </Routes>
       </Router>
