@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { Container, Button, Stack, Card, Alert, Spinner} from 'react-bootstrap';
+import { Container, Button, Stack, Card, Alert, Spinner, Badge} from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -92,7 +92,7 @@ function Missions({updatePlayerData = null}) {
     </Alert>
     <div className="d-flex justify-content-between mb-0 align-items-center">
       <Card.Title>
-        <h4>Daily Missions</h4>
+        <h4>Missions</h4>
       </Card.Title>
       <div className="d-flex flex-columns">
         {missionRewards && missionRewards.map((item)=>(
@@ -107,7 +107,10 @@ function Missions({updatePlayerData = null}) {
       <Alert variant="light" className="p-2 p-sm-3 mb-1 d-block d-sm-none"
         style={{fontSize: "0.9rem"}}
       >
-        <Alert.Heading style={{fontSize: "1.1rem"}}>{item.name}</Alert.Heading>
+        <Alert.Heading style={{fontSize: "1.1rem"}}>
+          {item.repeat != null && <Badge bg="secondary" className="me-1">{item.repeat.toUpperCase()}</Badge>}
+          {item.name}
+        </Alert.Heading>
         <div className="d-flex d-column justify-content-between">
           <div style={{fontSize: "0.9rem"}}>
             {item.description}
@@ -143,7 +146,10 @@ function Missions({updatePlayerData = null}) {
     ))}
     {Array.from(missions).map((item) => (
       <Alert variant="light" className="p-2 p-sm-3 mb-1 d-none d-sm-block">
-        <Alert.Heading>{item.name}</Alert.Heading>
+        <Alert.Heading>
+          {item.repeat != null && <Badge bg="secondary" className="me-1">{item.repeat.toUpperCase()}</Badge>}
+          {item.name}
+        </Alert.Heading>
         <div className="d-flex d-column justify-content-between">
           <div>
             {item.description}

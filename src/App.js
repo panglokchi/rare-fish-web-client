@@ -10,6 +10,7 @@ import Fishing from './components/Fishing';
 import Market from './components/Market';
 import Signup from './components/Signup';
 import PrivateRoute from './components/PrivateRoute';
+import Verify from './components/Verify';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/market" element={<PrivateRoute><Dashboard currentTab="market"/></PrivateRoute>} />
             <Route path="/fishing" element={<PrivateRoute><Dashboard currentTab="fishing"/></PrivateRoute>} />
             <Route path="/login" element={<Login/>} />
+            <Route path="/verify/:token" element={<Verify/>} />
             <Route path="/signup" element={<Signup/>} />
           </Routes>
       </Router>

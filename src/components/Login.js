@@ -10,6 +10,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState({status: "secondary", message: null})
   const [errors, setErrors] = useState('');
   const navigate = useNavigate();
   const routeChange = () =>{ 
@@ -41,6 +42,7 @@ function Login() {
         routeChange();
       } catch (error) {
         setErrors({ form: 'Login failed. Please try again.' });
+        setMessage({ status: "warning", message: error.response.data.error})
       }
     }
   };
@@ -79,6 +81,12 @@ function Login() {
                   {errors.password}
                 </Form.Control.Feedback>
               </Form.Group>
+
+              {message.status != "secondary" &&
+                <Alert className="p-2 m-0" variant={message.status}>
+                  {message.message}
+                </Alert>
+              }
 
               <Button variant="primary" type="submit" className="login-button">
                 Login

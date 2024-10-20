@@ -44,8 +44,8 @@ function Signup() {
         const response = await register(username, email, password);
         //console.log('Login successful:', userData);
         setSuccess(true)
-        setMessage("Success! Redirecting to login...")
-        setTimeout(routeChange, 2000)
+        setMessage("Success! Verify your email to continue.")
+        //setTimeout(routeChange, 2000)
       } catch (error) {
         setMessage(error.response.data.error)
         setErrors({ form: 'Registration failed. Please try again.' });
@@ -69,6 +69,7 @@ function Signup() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   isInvalid={!!errors.username}
+                  disabled={success}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.username}
@@ -83,6 +84,7 @@ function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   isInvalid={!!errors.email}
+                  disabled={success}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.email}
@@ -97,18 +99,21 @@ function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   isInvalid={!!errors.password}
+                  disabled={success}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.password}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Button variant="primary" type="submit" className="login-button">
+              <Button variant="primary" type="submit" className="login-button" disabled={success}>
                 Sign Up
               </Button>
-              <Alert show={message} variant={success ? "success" : "warning"}>
+
+              <Alert show={message} variant={success ? "success" : "warning"} className="m-0">
                 {message}
               </Alert>
+              
             </Stack>
           </Form>
         </Card.Body>
