@@ -19,7 +19,7 @@ function AuctionMarquee({auctionList = null}) {
 
   const fetchAuctions = async () => {
     try {
-      const auctionListResponse = await axios.get(`${API_URL}/market/recent-auctions`);
+      const auctionListResponse = await axios.get(`${API_URL}/market/recent-auctions?num=10`);
       setAuctions(auctionListResponse.data)
       setLoading(false)
     } catch (error) {
@@ -43,11 +43,11 @@ function AuctionMarquee({auctionList = null}) {
     <Container fluid className="text-light justify-content-center align-items-center">
       {!loading &&
         <Marquee style={{overflow: "hidden", height: "100%"}} speed={100}
-          className="vw-100"
+          className="vw-100" autoFill
           >
         <div className="text-light d-flex">
           {Array.from(auctions).map((item) => (
-            <div style={{maxHeight: "265px", margin:"0 0 0 30px"}}>
+            <div style={{maxHeight: "300px", margin:"0 0 0 30px"}}>
               <AuctionCard
                 item={item}
                 ownAuction={true}
