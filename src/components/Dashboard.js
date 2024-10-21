@@ -81,7 +81,8 @@ function Dashboard({currentTab = "home"}) {
   }
   return (
       <Container fluid className="text-light p-0" data-bs-theme="dark">
-        <TopNavbar userData={userData} playerData={playerData} tab={tab} setTab={setTab}/>
+        <TopNavbar userData={userData} playerData={playerData} tab={tab} setTab={setTab}
+          updatePlayerData={()=>{fetchData()}}/>
         <BottomFooter playerData={playerData} expNeeded={expNeeded}/>
 
         { tab == "home" &&

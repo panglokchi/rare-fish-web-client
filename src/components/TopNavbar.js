@@ -1,8 +1,11 @@
-import {Navbar, Container, Nav, Offcanvas, NavDropdown} from 'react-bootstrap';
+import { useState } from 'react';
+import {Navbar, Container, Nav, Offcanvas, NavDropdown, Modal} from 'react-bootstrap';
 
 import { logout } from '../utils/auth';
+import RegisterGuest from './RegisterGuest';
 
-function TopNavbar({userData, playerData, sticky = "top", tab="home", setTab=null}) {
+function TopNavbar({userData, playerData, sticky = "top", tab="home", setTab=null, updatePlayerData=null}) {
+  const [showRegisterGuest, setShowRegisterGuest] = useState(false);
   return (
     <Navbar sticky={sticky} key={false} expand={true} className="bg-body-tertiary">
       <Container>
@@ -75,11 +78,9 @@ function TopNavbar({userData, playerData, sticky = "top", tab="home", setTab=nul
               </Navbar.Text>
               <Nav.Item className="d-md-none d-block" >
                 <NavDropdown title={`👤`} id="basic-nav-dropdown" align="end">
-                  <NavDropdown.Item href="#action/3.1">Account</NavDropdown.Item>
-                  <NavDropdown.Item href="#action/3.2">
-                    Settings
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
+                  { userData.__t == "Guest" &&
+                    <NavDropdown.Item onClick={()=>{setShowRegisterGuest(true)}}>Register Account</NavDropdown.Item>
+                  }
                   <NavDropdown.Item onClick={()=>{
                     logout();
                   }} href="/">
@@ -89,11 +90,9 @@ function TopNavbar({userData, playerData, sticky = "top", tab="home", setTab=nul
               </Nav.Item>
               <Nav.Item className="d-none d-md-block">
                 <NavDropdown title={`👤${userData.username} - Lvl. ${playerData.level} - 💰${playerData.money.toFixed(2)}`} id="basic-nav-dropdown" align="end">
-                  <NavDropdown.Item href="#action/3.1">Account</NavDropdown.Item>
-                  <NavDropdown.Item href="#action/3.2">
-                    Settings
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
+                  { userData.__t == "Guest" &&
+                    <NavDropdown.Item onClick={()=>{setShowRegisterGuest(true)}}>Register Account</NavDropdown.Item>
+                  }
                   <NavDropdown.Item onClick={()=>{
                     logout();
                   }} href="/">
@@ -105,6 +104,8 @@ function TopNavbar({userData, playerData, sticky = "top", tab="home", setTab=nul
           </Offcanvas.Body>
         </Navbar.Offcanvas>
       </Container>
+      <RegisterGuest show={showRegisterGuest} onHide={()=>{setShowRegisterGuest(false)}}
+        updatePlayerData={()=>{updatePlayerData()}}></RegisterGuest>
     </Navbar>
   )
 }

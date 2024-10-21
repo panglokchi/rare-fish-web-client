@@ -13,6 +13,8 @@ import PrivateRoute from './components/PrivateRoute';
 import Verify from './components/Verify';
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from './components/ResetPassword';
+import RegisterGuest from './components/RegisterGuest';
+import VerifyGuest from './components/VerifyGuest';
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
             <Route path="/forgot-password" element={<ForgotPassword/>} />
             <Route path="/reset-password/:token" element={<ResetPassword/>} />
             <Route path="/signup" element={<Signup/>} />
+            <Route path="/register-guest/:token" element={<VerifyGuest/>} />
           </Routes>
       </Router>
     </div>

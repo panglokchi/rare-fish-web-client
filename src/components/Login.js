@@ -47,6 +47,12 @@ function Login() {
     }
   };
 
+  const registerGuest = async () => {
+    const response = await axios.post(`${API_URL}/create-guest`);
+    localStorage.setItem("accessToken", response.data.token);
+    navigate("/")
+  }
+
   return (
     <Container fluid className="text-light pt-2 d-flex justify-content-center align-items-center h-100" data-bs-theme="dark">
       <Card className="mw-50">
@@ -93,9 +99,15 @@ function Login() {
               <Button variant="primary" type="submit" className="login-button">
                 Login
               </Button>
-              <Button variant="secondary" className="signup-button" onClick={()=>{navigate("/signup")}}>
-                Sign Up
-              </Button>
+              <div className="d-flex">
+                <Button variant="secondary" className="signup-button w-50 me-1" onClick={()=>{navigate("/signup")}}>
+                  Sign Up
+                </Button>
+                <Button variant="secondary" className="guest-button w-50 ms-1" onClick={()=>{registerGuest()}}>
+                  Play as Guest
+                </Button>
+              </div>
+              
             </Stack>
           </Form>
         </Card.Body>
