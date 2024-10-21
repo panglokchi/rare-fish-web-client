@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { Form, Button, Container, Alert, Card, Stack, Badge} from 'react-bootstrap';
 import axios from 'axios';
 import { login } from '../utils/auth';
+import AuctionMarquee from './AuctionMarquee';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -54,8 +55,11 @@ function Login() {
   }
 
   return (
-    <Container fluid className="text-light pt-2 d-flex justify-content-center align-items-center h-100" data-bs-theme="dark">
-      <Card className="mw-50">
+    <Container fluid className="overflow-y-auto overflow-x-hidden text-light pt-2 d-flex flex-column justify-content-center align-items-center h-100" data-bs-theme="dark">
+      <div className="mb-3">
+        <AuctionMarquee></AuctionMarquee>
+      </div>
+      <Card className="mw-50 mb-4">
         <Card.Header className="text-center"><h1 className="display-1">🐠</h1><h3>Rare Fish Investor Simulator</h3><Badge className="bg-secondary">BETA</Badge></Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
