@@ -114,14 +114,18 @@ function FishCard({item, style = null, onClick = null, id = "", placeholder = fa
                                 item?.rarity == "epic" ? "danger" :
                                 item?.rarity == "legendary" ? "warning" :
                                 "secondary"
-                                } className="me-2 p-1">{item?.rarity}</Badge>
+                                } 
+                                style={item?.rarity == "legendary" ? {color: "black"} : null}                                
+                                className="me-2 p-1">{item?.rarity}</Badge>
                                 <Badge bg={
                                 item?.color == "white" ? "secondary" :
                                 item?.color == "red" ? "danger" :
                                 item?.color == "blue" ? "info" :
                                 item?.color == "green" ? "success" :
                                 "secondary"
-                                } className="me-2 p-1">{item?.color}</Badge>
+                                }
+                                style={item?.color == "blue" ? {color: "black"} : null} 
+                                className="me-2 p-1">{item?.color}</Badge>
                             </Card.Text>
                             <Card.Text className="d-none d-sm-flex">
                                 <Badge bg={
@@ -130,14 +134,18 @@ function FishCard({item, style = null, onClick = null, id = "", placeholder = fa
                                 item?.rarity == "epic" ? "danger" :
                                 item?.rarity == "legendary" ? "warning" :
                                 "secondary"
-                                } className="me-2">{item?.rarity}</Badge>
+                                }
+                                style={item?.rarity == "legendary" ? {color: "black"} : null}   
+                                className="me-2">{item?.rarity}</Badge>
                                 <Badge bg={
                                 item?.color == "white" ? "secondary" :
                                 item?.color == "red" ? "danger" :
                                 item?.color == "blue" ? "info" :
                                 item?.color == "green" ? "success" :
                                 "secondary"
-                                } className="me-2">{item?.color}</Badge>
+                                }
+                                style={item?.color == "blue" ? {color: "black"} : null}
+                                className="me-2">{item?.color}</Badge>
                             </Card.Text>
                         </>
                         

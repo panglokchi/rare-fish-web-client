@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { Container, Button, Stack, Card, Nav, Spinner, Alert, ProgressBar, Row, Col, Badge, Pagination, Modals, InputGroup, Form, Navbar} from 'react-bootstrap';
+import { Container, Button, Stack, Card, Nav, Spinner, Alert, ProgressBar, Row, Col, Badge, Pagination, Modals, InputGroup, Form, Navbar, Accordion} from 'react-bootstrap';
 import { Route, Navigate, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -17,6 +17,7 @@ function Aquarium({updatePlayerData = null, playerData = null, small = false}) {
   const [aquariumScore, setAquariumScore] = useState(0);
   const [aquariumCollectResult, setAquariumCollectResult] = useState({status: "secondary", message: null});
   const [showFishInfo, setShowFishInfo] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentTab, setCurrentTab] = useState(
     sessionStorage.getItem("aquariumTab") ?
     sessionStorage.getItem("aquariumTab") : 
@@ -289,6 +290,23 @@ function Aquarium({updatePlayerData = null, playerData = null, small = false}) {
           <div><h5></h5></div>
           <div className="ms-auto">{getPaginationElement()}</div>
         </Stack>
+        <Accordion className="mb-1 d-block d-sm-none">
+          <Accordion.Item>
+            <Accordion.Header>💬 Filters</Accordion.Header>
+            <Accordion.Body>
+              <InputGroup>
+                <InputGroup.Text id="basic-addon1">🔍</InputGroup.Text>
+                <Form.Control type="search" placeholder="Search"
+                  onChange={(e)=>{setSearchTerm(e.target.value)}}
+                  value={searchTerm}
+                  />
+                <Button variant="outline-secondary" onClick={()=>{setSearchTerm('')}}>
+                  Clear
+                </Button>
+              </InputGroup>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
         <div className="d-flex d-sm-none overflow-y-auto overflow-x-hidden p-0"
           id="mobile-card-grid"
           style={{scrollbarWidth: "none", maxHeight: "65vh"}}
@@ -314,6 +332,10 @@ function Aquarium({updatePlayerData = null, playerData = null, small = false}) {
               if (Array.from(aquariumList).map((item)=>{return item.fish}).includes(item._id)) {
                 return false
               } else return true
+            }).filter((item)=>{
+              if (item.fishType.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                return true
+              } else return false
             }).map((item) => (
               <Col key={item._id}>
                 
@@ -331,6 +353,23 @@ function Aquarium({updatePlayerData = null, playerData = null, small = false}) {
             ))}
           </Row>
         </div>
+        <Accordion className="mb-1 d-none d-sm-block">
+          <Accordion.Item>
+            <Accordion.Header>💬 Filters</Accordion.Header>
+            <Accordion.Body>
+              <InputGroup>
+                <InputGroup.Text id="basic-addon1">🔍</InputGroup.Text>
+                <Form.Control type="search" placeholder="Search"
+                  onChange={(e)=>{setSearchTerm(e.target.value)}}
+                  value={searchTerm}
+                  />
+                <Button variant="outline-secondary" onClick={()=>{setSearchTerm('')}}>
+                  Clear
+                </Button>
+              </InputGroup>
+            </Accordion.Body>
+          </Accordion.Item>
+        </Accordion>
         <div className="d-none d-sm-flex overflow-y-auto overflow-x-hidden"
           style={{maxHeight: "65vh"}}
         >
@@ -358,13 +397,19 @@ function Aquarium({updatePlayerData = null, playerData = null, small = false}) {
             item={fishInfo} player={playerData} updatePlayerData={()=>updatePlayerData()}
               fetchData={()=>{fetchData()}}
             />
+
           <Container className="p-0 overflow-y-auto overflow-x-hidden"
             id="big-card-grid" style={{scrollbarColor: "#777 transparent", maxHeight: "65vh"}}>
+
             <Row xs={2} sm={2} md={2} lg={3} xl={4} xxl={5} className="g-3 overflow-y-hidden overflow-x-hidden">
               {Array.from(fishList).sort(sortFish).filter((item)=>{
                 if (Array.from(aquariumList).map((item)=>{return item.fish}).includes(item._id)) {
                   return false
                 } else return true
+              }).filter((item)=>{
+                if (item.fishType.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+                  return true
+                } else return false
               }).map((item) => (
                 <Col key={item._id}>
                   <FishCard
