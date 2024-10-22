@@ -9,6 +9,7 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
     const [itemState, setItemState] = useState(item);
     const [bidAmount, setBidAmount] = useState(null);
     const [bidResult, setBidResult] = useState(null);
+    const [bidSuccess, setBidSuccess] = useState(false);
     const [timeToExpiry, setTimeToExpiry] = useState(null);
     const [expired, setExpired] = useState(false);
     const [expiredSince, setExpiredSince] = useState(null);
@@ -26,8 +27,10 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
                 auction: itemState._id,
                 bid: bidAmount,
             }, config);
-            const newBidResult = "Bid Successful"
-            setBidResult(newBidResult)
+            //const newBidResult = "Bid Successful"
+            //setBidResult(newBidResult)
+            setBidResult(makeBidResponse.data.message)
+            setBidSuccess(true)
             const auctionResponse = await axios.get(`${API_URL}/market/auctions/${item._id}`, config);
             setItemState(auctionResponse.data)
             setBidAmount(Math.ceil(auctionResponse.data.highestBid * 1.05 * 100)/100)
@@ -121,8 +124,8 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
                                 className="mb-0 py-1 px-3"
                                 show={bidResult != null}
                                 variant={
-                                    bidResult == "You are already the highest bidder" ? 'primary' :
-                                    bidResult == "Bid Successful" ? 'success': 'warning'
+                                    bidSuccess == true ? "success" :
+                                    bidResult == "You are already the highest bidder" ? 'primary' : 'warning'
                                 }
                             >
                                 {bidResult}
@@ -152,8 +155,8 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
                                 className="mb-0 py-1 px-3"
                                 show={bidResult != null}
                                 variant={
-                                    bidResult == "You are already the highest bidder" ? 'primary' :
-                                    bidResult == "Bid Successful" ? 'success': 'warning'
+                                    bidSuccess == true ? "success" :
+                                    bidResult == "You are already the highest bidder" ? 'primary' : 'warning'
                                 }
                             >
                                 {bidResult}
