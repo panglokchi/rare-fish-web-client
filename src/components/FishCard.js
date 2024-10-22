@@ -79,6 +79,7 @@ function FishCard({item, style = null, onClick = null, id = "", placeholder = fa
                             <Placeholder xs={5}/> <Placeholder xs={4}/> 
                         </Placeholder> : 
                         <>
+                            
                             <Card.Title className="d-flex d-sm-none mb-1" style={{fontSize: "0.9rem"}}>
                                 {item?.name}
                             </Card.Title>
@@ -108,6 +109,11 @@ function FishCard({item, style = null, onClick = null, id = "", placeholder = fa
                         </Placeholder> :
                         <>
                             <Card.Text className="d-flex d-sm-none mb-2"  style={{fontSize: "0.9rem"}}>
+                                { item.isNewFish && 
+                                    <>
+                                        <Badge className="d-inline-block d-sm-none bg-danger me-2">NEW</Badge>
+                                    </>
+                                }
                                 <Badge bg={
                                 item?.rarity == "common" ? "success" :
                                 item?.rarity == "rare" ? "primary" :
@@ -128,6 +134,11 @@ function FishCard({item, style = null, onClick = null, id = "", placeholder = fa
                                 className="me-2 p-1">{item?.color}</Badge>
                             </Card.Text>
                             <Card.Text className="d-none d-sm-flex">
+                                { item.isNewFish && 
+                                    <>
+                                        <Badge className="d-none d-sm-inline-block bg-danger me-2">NEW</Badge>
+                                    </>
+                                }
                                 <Badge bg={
                                 item?.rarity == "common" ? "success" :
                                 item?.rarity == "rare" ? "primary" :

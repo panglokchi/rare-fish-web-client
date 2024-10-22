@@ -21,6 +21,12 @@ function Dashboard({currentTab = "home"}) {
     nextLevelExp: 105
   });
   const [tab, setTab] = useState(currentTab);
+  const [notifications, setNotifications] = useState({
+    "missions": 0,
+    "newFish": 0,
+    "finishedAuctions": 0,
+    "losingAuctions": 0
+  })
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -38,12 +44,14 @@ function Dashboard({currentTab = "home"}) {
       const playerDataResponse = await axios.get(`${API_URL}/user/player`, config);
       //console.log(userDataResponse.data)
       const expNeededResponse = await axios.get(`${API_URL}/player/get-xp-needed/`, config);
+      const notificationsResponse = await axios.get(`${API_URL}/player/notifications/`, config);
       //console.log("Response received")
       //console.log(response.data)
       //console.log(expNeededResponse.data)
       setUserData(userDataResponse.data);
       setPlayerData(playerDataResponse.data);
       setExpNeeded(expNeededResponse.data)
+      setNotifications(notificationsResponse.data)
       //console.log(parseInt(100*(playerData.exp - expNeeded.lastLevelExp)/(expNeeded.nextLevelExp - expNeeded.lastLevelExp)))
     } catch (error) {
       if (error.response.data.error == ("Player not found")) {
@@ -82,7 +90,7 @@ function Dashboard({currentTab = "home"}) {
   return (
       <Container fluid className="text-light p-0" data-bs-theme="dark">
         <TopNavbar userData={userData} playerData={playerData} tab={tab} setTab={setTab}
-          updatePlayerData={()=>{fetchData()}}/>
+          updatePlayerData={()=>{fetchData()}} notifications={notifications}/>
         <BottomFooter playerData={playerData} expNeeded={expNeeded}/>
 
         { tab == "home" &&
@@ -103,11 +111,13 @@ function Dashboard({currentTab = "home"}) {
         { tab == "aquarium" &&
           <>
             <Container className="d-block d-sm-none p-0">
-              <Aquarium updatePlayerData={()=>{fetchData()}} playerData={playerData} small={true}></Aquarium>
+              <Aquarium updatePlayerData={()=>{fetchData()}} playerData={playerData} small={true}
+              notifications={notifications}></Aquarium>
             </Container>
             <Container className="d-none d-sm-block">
               <Card className="mt-2">
-                  <Aquarium updatePlayerData={()=>{fetchData()}} playerData={playerData}></Aquarium>
+                  <Aquarium updatePlayerData={()=>{fetchData()}} playerData={playerData}
+                    notifications={notifications}></Aquarium>
               </Card>
             </Container>
           </>
@@ -130,13 +140,13 @@ function Dashboard({currentTab = "home"}) {
           <>
             <Container className="d-block d-sm-none p-0">
               <Market updatePlayerData={()=>{fetchData()}} playerData={playerData} userData={userData}
-                small={true} setTab={setTab}
+                small={true} setTab={setTab} notifications={notifications}
               ></Market>
             </Container>
             <Container className="d-none d-sm-block">
               <Card className="mt-2">
                 <Market updatePlayerData={()=>{fetchData()}} playerData={playerData} userData={userData}
-                  setTab={setTab}
+                  setTab={setTab} notifications={notifications}
                 ></Market>
               </Card>
             </Container>

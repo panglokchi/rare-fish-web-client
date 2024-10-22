@@ -10,7 +10,7 @@ import BottomFooter from './BottomFooter';
 import AuctionCard from './AuctionCard';
 const API_URL = process.env.REACT_APP_API_URL; // Mock API
 
-function Market({updatePlayerData = null, playerData = null, userData = null, small = false, setTab = null}) {
+function Market({updatePlayerData = null, playerData = null, userData = null, small = false, setTab = null, notifications = null}) {
   const [fishInfo, setFishInfo] = useState(null);
   const [showOwnFishInfo, setShowOwnFishInfo] = useState(false);
   const [showFishInfo, setShowFishInfo] = useState(false);
@@ -133,13 +133,19 @@ function Market({updatePlayerData = null, playerData = null, userData = null, sm
               <Nav.Link className="px-1 px-sm-3" eventKey="other" onClick={()=>{
                 setCurrentTab("other");
                 sessionStorage.setItem("marketTab", "other");
-              }}>📈Current</Nav.Link>
+              }}>📈Current
+              {notifications.losingAuctions > 0 &&
+                <Badge className="bg-danger ms-1">{notifications.losingAuctions}</Badge>}
+              </Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link className="px-1 px-sm-3" eventKey="finished" onClick={()=>{
                 setCurrentTab("finished");
                 sessionStorage.setItem("marketTab", "finished");
-              }}>⌛Finished</Nav.Link>
+              }}>⌛Finished
+              {notifications.finishedAuctions > 0 &&
+                <Badge className="bg-danger ms-1">{notifications.finishedAuctions}</Badge>}
+              </Nav.Link>
             </Nav.Item>
           </Nav>
         </>
@@ -162,13 +168,19 @@ function Market({updatePlayerData = null, playerData = null, userData = null, sm
                 <Nav.Link className="px-1 px-sm-3" eventKey="other" onClick={()=>{
                   setCurrentTab("other");
                   sessionStorage.setItem("marketTab", "other");
-                }}>📈Current</Nav.Link>
+                }}>📈Current
+                {notifications.losingAuctions > 0 &&
+                  <Badge className="bg-danger ms-1">{notifications.losingAuctions}</Badge>}
+                </Nav.Link>
               </Nav.Item>
               <Nav.Item>
                 <Nav.Link className="px-1 px-sm-3" eventKey="finished" onClick={()=>{
                   setCurrentTab("finished");
                   sessionStorage.setItem("marketTab", "finished");
-                }}>⌛Finished</Nav.Link>
+                }}>⌛Finished
+                  {notifications.finishedAuctions > 0 &&
+                    <Badge className="bg-danger ms-1">{notifications.finishedAuctions}</Badge>}
+                  </Nav.Link>
               </Nav.Item>
             </Nav>
           </Card.Header>   

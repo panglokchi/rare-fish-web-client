@@ -1,4 +1,11 @@
 const sortFish = (a, b) => {
+    if (a.isNewFish && !b.isNewFish) {
+        return -1;
+    }
+    if (!a.isNewFish && b.isNewFish) {
+        return 1;
+    }
+
     const rarityValues = {
         'common': 1,
         'rare': 2,
