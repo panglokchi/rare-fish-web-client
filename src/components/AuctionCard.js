@@ -292,7 +292,7 @@ function AuctionCard({item, onClick, placeholder = false, ownAuction = false, st
                                     }
                                 </Card.Footer> :
                                 <Card.Footer className="py-1 px-2 p-sm-2 px-sm-3">
-                                    Sold {expiredSince}
+                                    {(item.highestBidder ? "Sold " : "Ended ") + expiredSince}
                                 </Card.Footer>
                             )
                         }

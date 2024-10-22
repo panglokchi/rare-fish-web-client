@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { Container, Button, Stack, Card, Nav, Navbar, NavDropdown, Offcanvas, Alert, ProgressBar, Row, Col, Badge, Pagination, CardGroup, ListGroup, Placeholder, Form, InputGroup, Spinner} from 'react-bootstrap';
+import { Container, Button, Stack, Card, Nav, Navbar, NavDropdown, Offcanvas, Alert, ProgressBar, Row, Col, Badge, Pagination, CardGroup, ListGroup, Placeholder, Form, InputGroup, Spinner, Accordion} from 'react-bootstrap';
 import { Route, Navigate, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
@@ -20,6 +20,13 @@ function Market({updatePlayerData = null, playerData = null, userData = null, sm
   const [winningAuctionList, setWinningAuctionList] = useState([]);
   const [lostAuctionList, setLostAuctionList] = useState([]);
   const [losingAuctionList, setLosingAuctionList] = useState([]);
+  const [filterAll, setFilterAll] = useState(true);
+  const [filterClaimable, setFilterClaimable] = useState(true);
+  const [filterClaimed, setFilterClaimed] = useState(true);
+  const [filterWon, setFilterWon] = useState(true);
+  const [filterSold, setFilterSold] = useState(true);
+  const [filterUnsold, setFilterUnsold] = useState(true);
+  const [filterLost, setFilterLost] = useState(true);
   const [currentTab, setCurrentTab] = useState(
     sessionStorage.getItem("marketTab") ?
     sessionStorage.getItem("marketTab") : 
@@ -335,23 +342,114 @@ function Market({updatePlayerData = null, playerData = null, userData = null, sm
                   }
                 `}
               </style>
-              <Container className="px-0" style={{maxHeight: "55vh"}}>
+              <Container className="px-0" style={{maxHeight: "75vh", minHeight:"20vh"}}>
+                <Accordion className="mb-1">
+                  <Accordion.Item>
+                    <Accordion.Header>Filter
+                      {filterAll ? <Badge className="bg-secondary ms-1">All</Badge> : 
+                        (filterClaimable + filterClaimed + filterWon + filterSold + filterUnsold + filterLost > 4) ?
+                        <Badge className="bg-secondary ms-1">Multiple Filters</Badge> :
+                        [
+                          {filter: filterClaimable, name: "Unclaimed", bg: "primary"},
+                          {filter: filterClaimed, name: "Claimed", bg: "secondary"},
+                          {filter: filterWon, name: "Won", bg: "success"},
+                          {filter: filterSold, name: "Sold", bg: "warning"},
+                          {filter: filterUnsold, name: "Unsold", bg: "primary"},
+                          {filter: filterLost, name: "Lost", bg: "danger"},
+                        ].filter((item)=>{return item.filter}).map((item)=>(
+                          <Badge bg={item.bg} className="ms-1">{item.name}</Badge>
+                        ))
+                      }
+                      </Accordion.Header>
+                    <Accordion.Body>
+                      <Form>
+                        <Form.Check inline label="All" checked={filterAll}
+                          onClick={(e) => {
+                            setFilterAll(e.target.checked)
+                            setFilterClaimable(e.target.checked);
+                            setFilterClaimed(e.target.checked);
+                            setFilterWon(e.target.checked);
+                            setFilterSold(e.target.checked);
+                            setFilterUnsold(e.target.checked);
+                            setFilterLost(e.target.checked);
+                          }}></Form.Check>
+                        <Form.Check inline label="Unclaimed" checked={filterClaimable}
+                          onClick={(e) => {
+                            setFilterClaimable(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                        <Form.Check inline label="Claimed" checked={filterClaimed}
+                          onClick={(e) => {
+                            setFilterClaimed(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                        <Form.Check inline label="Won" checked={filterWon}
+                          onClick={(e) => {
+                            setFilterWon(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                        <Form.Check inline label="Sold" checked={filterSold}
+                          onClick={(e) => {
+                            setFilterSold(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                        <Form.Check inline label="Unsold" checked={filterUnsold}
+                          onClick={(e) => {
+                            setFilterUnsold(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                        <Form.Check inline label="Lost" checked={filterLost}
+                          onClick={(e) => {
+                            setFilterLost(e.target.checked);
+                            if (!e.target.checked) setFilterAll(false);
+                          }}></Form.Check>
+                      </Form>
+                    </Accordion.Body>
+                  </Accordion.Item>
+                </Accordion>
+
                 <Row xs={1} sm={1} md={1} lg={2} xl={2} xxl={2} className="g-2">
-                  {Array.from(wonAuctionList).map((item) => (
-                    <Col key={item._id}>
-                      <AuctionCard
-                        item={item}
-                        onClick={()=>{
-                          setShowOwnFishInfo(true)
-                          setFishInfo(item.fish)
-                        }}
-                        status={"won"}
-                        updatePlayerData={updatePlayerData}
-                      >
-                      </AuctionCard>
-                    </Col>
-                  ))}
-                  {Array.from(ownFinishedAuctionList).map((item) => (
+                {[
+                  ...Array.from(wonAuctionList)
+                    .filter(item => item.claimed.buyer === false)
+                    .filter(item => {return filterWon})
+                    .filter(item => {return filterClaimable})
+                    .map(item => ({ ...item, source: 'wonAuctionList' })),
+                  ...Array.from(ownFinishedAuctionList)
+                    .filter(item => item.claimed.seller === false)
+                    .filter(item => {
+                      if (!filterUnsold && item.highestBidder == null) {
+                        return false
+                      }
+                      if (!filterSold && item.highestBidder != null) {
+                        return false
+                      }
+                      return true
+                    })
+                    .filter(item => {return filterClaimable})
+                    .map(item => ({ ...item, source: 'ownFinishedAuctionList' })),
+                  ...Array.from(wonAuctionList)
+                    .filter(item => item.claimed.buyer === true)
+                    .filter(item => {return filterWon})
+                    .filter(item => {return filterClaimed})
+                    .map(item => ({ ...item, source: 'wonAuctionList' })),,
+                  ...Array.from(ownFinishedAuctionList)
+                    .filter(item => item.claimed.seller === true)
+                    .filter(item => {
+                      if (!filterUnsold && item.highestBidder == null) {
+                        return false
+                      }
+                      if (!filterSold && item.highestBidder != null) {
+                        return false
+                      }
+                      return true
+                    })
+                    .filter(item => {return filterClaimed})
+                    .map(item => ({ ...item, source: 'ownFinishedAuctionList' })),
+                  ...Array.from(lostAuctionList)
+                    .filter(item => {return filterLost ? true : false})
+                    .map(item => ({ ...item, source: 'lostAuctionList' }))
+                  ].map((item) => (
                     <Col key={item._id}>
                       <AuctionCard
                         item={item}
@@ -359,25 +457,18 @@ function Market({updatePlayerData = null, playerData = null, userData = null, sm
                           setShowFishInfo(true)
                           setFishInfo(item.fish)
                         }}
-                        status={item.highestBidder ? "sold" : "unsold"}
+                        status={
+                          item.source == "wonAuctionList" ? "won" :
+                          item.source == "ownFinishedAuctionList" && item.highestBidder ? "sold" :
+                          item.source == "ownFinishedAuctionList" && !item.highestBidder ? "unsold" :
+                          "lost"
+                        }
                         updatePlayerData={updatePlayerData}
                       >
                       </AuctionCard>
                     </Col>
                   ))}
-                  {Array.from(lostAuctionList).map((item) => (
-                    <Col key={item._id}>
-                      <AuctionCard
-                        item={item}
-                        onClick={()=>{
-                          setShowFishInfo(true)
-                          setFishInfo(item.fish)
-                        }}
-                        status={"lost"}
-                      >
-                      </AuctionCard>
-                    </Col>
-                  ))}
+                  
                 </Row>
               </Container>
             </div>
